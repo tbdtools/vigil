@@ -1,0 +1,33 @@
+[package]
+name = "vigil-core"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[dependencies]
+# Local dependencies
+vigil-common = { path = "../vigil-common" }
+
+# eBPF support
+aya = { workspace = true }
+aya-log = { workspace = true }
+
+# Async runtime
+tokio = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+
+[dev-dependencies]
+test-case = { workspace = true }
+tokio = { workspace = true, features = ["test-util"] }
+mockall = { workspace = true }

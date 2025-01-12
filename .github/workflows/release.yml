@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+jobs:
+  # Create GitHub release with artifacts
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install LLVM and Clang
+        run: sudo apt-get install -y llvm clang libclang-dev
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Release
+        run: cargo build --release --all-features
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            target/release/vigil
+          draft: false
+          prerelease: ${{ contains(github.ref, '-') }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Publish to crates.io
+  publish-crate:
+    name: Publish to crates.io
+    needs: [create-release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Publish vigil-common
+        run: cargo publish --token ${CRATES_TOKEN} --manifest-path crates/vigil-common/Cargo.toml
+        env:
+          CRATES_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+
+      - name: Publish vigil-events
+        run: cargo publish --token ${CRATES_TOKEN} --manifest-path crates/vigil-events/Cargo.toml
+        env:
+          CRATES_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
+
+      # Add other crates in correct dependency order
+
+      - name: Publish vigil-cli
+        run: cargo publish --token ${CRATES_TOKEN} --manifest-path crates/vigil-cli/Cargo.toml
+        env:
+          CRATES_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
