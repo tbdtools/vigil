@@ -1,0 +1,23 @@
+{
+  "customManagers": [
+    {
+      "customType": "regex",
+      "fileMatch": ["^rust-toolchain(\\.toml)?$"],
+      "matchStrings": [
+        "channel\\s*=\\s*\"(?<currentValue>\\d+\\.\\d+\\.\\d+)\"",
+        "^(?<currentValue>\\d+\\.\\d+\\.\\d+)\\s*$"
+      ],
+      "depNameTemplate": "rust",
+      "datasourceTemplate": "docker",
+      "versioningTemplate": "semver"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["rust"],
+      "matchManagers": ["regex"],
+      "stabilityDays": 7,
+      "extends": [":semanticCommitTypeAll(chore)"]
+    }
+  ]
+}

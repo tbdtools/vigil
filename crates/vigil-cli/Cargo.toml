@@ -1,0 +1,36 @@
+# crates/vigil-cli/Cargo.toml
+[package]
+name = "vigil-cli"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "vigil"
+path = "src/main.rs"
+
+[dependencies]
+# Workspace dependencies
+vigil-core = { path = "../vigil-core" }
+vigil-common = { path = "../vigil-common" }
+
+# Command line parsing
+clap = { workspace = true }
+
+# Async runtime
+tokio = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Logging
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+
+[dev-dependencies]
+assert_cmd = "2.0"
+predicates = "3.0"
+test-case = { workspace = true }
+tokio = { workspace = true, features = ["test-util"] }

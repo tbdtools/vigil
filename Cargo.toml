@@ -1,0 +1,60 @@
+# Cargo.toml
+[workspace]
+resolver = "2"
+members = [
+  "crates/vigil-core",   # Core EDR functionality and eBPF management
+  "crates/vigil-cli",    # Command-line interface
+  "crates/vigil-rules",  # Sigma rule parsing and management
+  "crates/vigil-events", # Event collection and processing
+  "crates/vigil-common", # Shared utilities and types
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["TBD Tools Team"]
+license = "Apache-2.0"
+repository = "https://github.com/tbdtools/vigil"
+
+[workspace.dependencies]
+# Core async runtime
+tokio = { version = "1.35", features = ["full"] }
+
+# eBPF support
+aya = { version = "0.13", features = ["async_tokio"] }
+aya-log = "0.2"
+
+# CLI framework
+clap = { version = "4.4", features = ["derive"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+anyhow = "1.0"
+thiserror = "2.0"
+
+# Logging and tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Testing
+mockall = "0.13"
+test-case = "3.3"
+
+# Development time only
+criterion = "0.5"
+proptest = "1.4"
+
+[profile.release]
+lto = true        # Enable link-time optimization
+codegen-units = 1 # Optimize for size
+panic = "abort"   # Remove panic unwinding overhead
+strip = true      # Strip symbols from binary
+
+[profile.dev.package.aya-bpf]
+opt-level = 3 # Optimize eBPF code even in debug builds
+
+[profile.release.package.aya-bpf]
+opt-level = 3 # Always optimize eBPF code
